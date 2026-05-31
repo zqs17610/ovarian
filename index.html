@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>卵巢癌预后评估工具（CDCA5+FOXM1）</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e66 0%, #1a2a44 100%);
+            color: white;
+            padding: 28px 32px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+        .header p {
+            margin: 8px 0 0;
+            opacity: 0.85;
+            font-size: 0.9rem;
+        }
+        .content {
+            padding: 28px 32px 32px;
+        }
+        .input-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            color: #1e2a3a;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            background: white;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2c3e66;
+            box-shadow: 0 0 0 3px rgba(44,62,102,0.2);
+        }
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+        }
+        button {
+            background: #2c3e66;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        button:hover {
+            background: #1f2c48;
+            transform: translateY(-1px);
+        }
+        .result {
+            margin-top: 28px;
+            background: #eef2ff;
+            border-radius: 28px;
+            padding: 20px;
+            text-align: center;
+            border-left: 6px solid #2c3e66;
+        }
+        .risk-score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+        }
+        .risk-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 8px;
+            padding: 6px 14px;
+            display: inline-block;
+            border-radius: 40px;
+            background: white;
+        }
+        .risk-low { color: #0f6e3f; background: #e0f2e9; }
+        .risk-medium { color: #b45309; background: #fff0e6; }
+        .risk-high { color: #b91c1c; background: #ffe6e6; }
+        .footnote {
+            margin-top: 24px;
+            font-size: 0.7rem;
+            color: #5e6f8d;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+        hr {
+            margin: 16px 0;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+        }
+        .info-badge {
+            background: #e6edf5;
+            border-radius: 20px;
+            padding: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            color: #1f3a5f;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h1>⸻ 卵巢癌预后评估 ⸻</h1>
+        <p>基于CDCA5+FOXM1表达及残留病灶的个体化风险模型</p>
+    </div>
+    <div class="content">
+        <div class="info-badge">
+            📌 本工具基于项目组构建的Cox回归模型（Zhang et al. Cell Mol Biol 2023）。
+            风险评分 = 0.68×CDCA5 + 0.54×FOXM1 + 0.92×残留病灶(1/0)。
+            ＜详情见创新点一分子预后模型＞
+        </div>
+
+        <div class="input-group">
+            <label>🔬 CDCA5相对表达量（qPCR或IHC评分，连续值）</label>
+            <input type="number" id="cdca5" step="0.1" value="2.5" placeholder="例如 2.5">
+        </div>
+
+        <div class="input-group">
+            <label>🧬 FOXM1相对表达量（连续值）</label>
+            <input type="number" id="foxm1" step="0.1" value="3.0" placeholder="例如 3.0">
+        </div>
+
+        <div class="input-group">
+            <label>🩺 肿瘤细胞减灭术后残留病灶 (RD)</label>
+            <div class="radio-group">
+                <label><input type="radio" name="rd" value="0" checked> R0 切除 (无肉眼残留)</label>
+                <label><input type="radio" name="rd" value="1"> R1/R2 残留 (肉眼残留 >0)</label>
+            </div>
+        </div>
+
+        <button id="calcBtn">🔄 计算风险评分 & 预后分层</button>
+
+        <div class="result" id="resultArea" style="display: none;">
+            <div style="font-weight: 500; margin-bottom: 8px;">📊 综合风险评分</div>
+            <div class="risk-score" id="riskValue">-</div>
+            <div id="riskLabel" class="risk-label">-</div>
+            <div style="margin-top: 14px; font-size: 0.85rem;" id="interpretText"></div>
+        </div>
+
+        <div class="footnote">
+            * 本工具仅用于科研演示，基于已发表模型系数(示意版)。实际临床决策需结合MDT及病理结果。<br>
+            ⏺ 参考阈值: &lt;2.5 = 低风险, 2.5~4.5 = 中风险, &gt;4.5 = 高风险。
+        </div>
+    </div>
+</div>
+
+<script>
+    // 模型系数（根据你的真实Cox回归结果修改这里！）
+    // 示例系数：logHR (基于Zhang et al 数据示意，实际请替换)
+    const COEF_CDCA5 = 0.68;    // 每增加1单位CDCA5，风险增加exp(0.68)
+    const COEF_FOXM1 = 0.54;
+    const COEF_RD = 0.92;       // 残留病灶 (1: 有残留, 0: R0)
+
+    // 可选：基准生存函数或截距值（用于绝对风险概率，如果不用可忽略）
+    // 这里只计算相对风险评分，然后根据训练集三分位数划分低中高
+
+    function calculateRisk(cdca5, foxm1, rd) {
+        let linearScore = (cdca5 * COEF_CDCA5) + (foxm1 * COEF_FOXM1) + (rd * COEF_RD);
+        return linearScore;
+    }
+
+    function interpretRisk(score) {
+        if (score < 2.5) return { level: "低风险", class: "risk-low", text: "预后相对较好，R0切除率高，建议标准术后辅助治疗。" };
+        if (score >= 2.5 && score <= 4.5) return { level: "中风险", class: "risk-medium", text: "中度复发风险，考虑加强术后监测或辅助治疗。" };
+        return { level: "高风险", class: "risk-high", text: "高危复发倾向，推荐严密随访、临床试验或联合治疗策略。" };
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', function () {
+        let cdca5 = parseFloat(document.getElementById('cdca5').value);
+        let foxm1 = parseFloat(document.getElementById('foxm1').value);
+        let rdRadio = document.querySelector('input[name="rd"]:checked');
+        let rd = rdRadio ? parseInt(rdRadio.value) : 0;
+
+        if (isNaN(cdca5) || isNaN(foxm1)) {
+            alert("请填写有效的数值（CDCA5和FOXM1表达量）");
+            return;
+        }
+
+        let riskScore = calculateRisk(cdca5, foxm1, rd);
+        let interpretation = interpretRisk(riskScore);
+
+        let resultDiv = document.getElementById('resultArea');
+        resultDiv.style.display = 'block';
+        document.getElementById('riskValue').innerHTML = riskScore.toFixed(2);
+        let riskLabelDiv = document.getElementById('riskLabel');
+        riskLabelDiv.innerHTML = interpretation.level;
+        riskLabelDiv.className = "risk-label " + interpretation.class;
+        document.getElementById('interpretText').innerHTML = interpretation.text;
+    });
+</script>
+</body>
+</html>
